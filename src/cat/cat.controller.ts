@@ -12,6 +12,7 @@ import {
 import { CatDto } from './dto/cat.dto';
 import { CatService } from './service/cat.service';
 import { ConfigService } from '@nestjs/config';
+import { Cat } from './entity/cat.entity';
 
 @Controller('cats')
 export class CatController {
@@ -23,7 +24,7 @@ export class CatController {
   ) {}
 
   @Get(':id')
-  getCats(@Param('id', ParseIntPipe) id): CatDto {
+  getCats(@Param('id', ParseIntPipe) id): Promise<Cat> {
     this.logger.debug(`App name = ${this.configService.get('APP_NAME')}`);
     this.logger.debug(`Env = ${this.configService.get('ENV')}`);
     this.logger.debug(`Getting cat with id=${id}`);
@@ -33,17 +34,16 @@ export class CatController {
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
-    return this.catService.findCat(id);
+    return this.catService.findById(id);
   }
 
   @Get()
-  getAllCats(): CatDto[] {
-    return this.catService.findAllCat();
+  getAllCats(): Promise<Cat[]> {
+    return this.catService.findAll();
   }
 
   @Post()
-  createCat(@Body() catDto: CatDto): CatDto {
-    console.log(catDto);
+  createCat(@Body() catDto: CatDto): Promise<Cat> {
     return this.catService.createCat(catDto);
   }
 }
