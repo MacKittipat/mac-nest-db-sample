@@ -4,6 +4,7 @@ import {
   Get,
   HttpException,
   HttpStatus,
+  Logger,
   Param,
   ParseIntPipe,
   Post,
@@ -13,10 +14,13 @@ import { CatService } from './service/cat.service';
 
 @Controller('cats')
 export class CatController {
+  private readonly logger = new Logger(CatController.name);
+
   constructor(private readonly catService: CatService) {}
 
   @Get(':id')
   getCats(@Param('id', ParseIntPipe) id): CatDto {
+    this.logger.debug(`Getting cat with id=${id}`);
     if (id === 666) {
       throw new HttpException(
         `Error when query cat with id=${id}`,
